@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-
 import User from "../models/companyModel.js";
 
 export const register = async (req, res) => {
@@ -13,6 +12,12 @@ export const register = async (req, res) => {
       return res.status(403).json({ message: "User already exist." });
     }
 
+    let emailRegex =
+      /([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+/;
+
+    let valid = emailRegex.test(email);
+    if (!valid) return res.status(400).json({ message: "Invalid email" });
+
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Passwords don't match" });
     }
@@ -22,7 +27,7 @@ export const register = async (req, res) => {
 
     const newUser = new User({
       companyName,
-      profilePhoto,
+      profilePhoto: req.file.path,
       email,
       password: hashedPass,
     });
@@ -47,7 +52,6 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const existingUser = await User.findOne({ email });
 

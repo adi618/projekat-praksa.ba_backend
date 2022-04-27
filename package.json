@@ -1,7 +1,6 @@
 {
   "name": "projekat-praksa.ba_backend",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -17,9 +16,20 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.1.2"
+    "mongoose": "^6.1.2",
+    "multer": "^1.4.4",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adi618/projekat-praksa.ba_backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adi618/projekat-praksa.ba_backend/issues"
+  },
+  "homepage": "https://github.com/adi618/projekat-praksa.ba_backend#readme",
+  "description": ""
 }
