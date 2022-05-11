@@ -3,7 +3,7 @@ import Company from "../models/companyModel.js";
 
 export const getCompanies = async (req, res) => {
   try {
-    const companies = await Company.find();
+    const companies = await Company.find().select("-password");
     if (!companies) {
       return res.status(404).json({ message: "No companies found." });
     }
@@ -16,7 +16,7 @@ export const getCompanies = async (req, res) => {
 
 export const getCompany = async (req, res) => {
   try {
-    const company = await Company.findById(req.params.id);
+    const company = await Company.findById(req.params.id).select("-password");
     if (!company) {
       return res.status(404).json({ message: "Account doesn't exist." });
     }
