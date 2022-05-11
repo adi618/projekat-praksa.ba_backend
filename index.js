@@ -18,7 +18,7 @@ app.use(cors());
 
 app.use("/api", authRoutes);
 app.use("/api/companies", companyRoutes);
-app.use("/api/post", postRoutes);
+app.use("/api/posts", postRoutes);
 
 const CONNECTION_URL = process.env.CONNECTION_URL;
 const PORT = process.env.PORT || 5000;

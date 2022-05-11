@@ -6,12 +6,13 @@ import {
   updateCompany,
   deleteCompany,
 } from "../controllers/companyController.js";
+import { protect } from "../middleware/auth.js";
 
 const router = Router();
 
 router.get("/", getCompanies);
 router.get("/:id", getCompany);
-router.put("/:id", updateCompany);
-router.delete("/:id", deleteCompany);
+router.put("/:id", protect, updateCompany);
+router.delete("/:id", protect, deleteCompany);
 
 export default router;

@@ -23,29 +23,27 @@ export const createPost = async (req, res) => {
 
 function filter(data, query) {
   let posts;
-  console.log("k");
-  //let data = await Post.find();
-  if (query.name && query.category && query.city) {
+  if (query.id && query.category && query.city) {
     posts = data.filter(
       (p) =>
-        p.companyName == query.name &&
+        p.company == query.id &&
         p.location == query.city &&
         p.category == query.category
     );
-  } else if (query.name && query.category) {
+  } else if (query.id && query.category) {
     posts = data.filter(
-      (p) => p.companyName == query.name && p.category == query.category
+      (p) => p.company == query.id && p.category == query.category
     );
-  } else if (query.name && query.city) {
+  } else if (query.id && query.city) {
     posts = data.filter(
-      (p) => p.companyName == query.name && p.location == query.city
+      (p) => p.company == query.id && p.location == query.city
     );
   } else if (query.category && query.city) {
     posts = data.filter(
       (p) => p.location == query.city && p.category == query.category
     );
-  } else if (query.name) {
-    posts = data.filter((p) => p.companyName == query.name);
+  } else if (query.id) {
+    posts = data.filter((p) => p.company == query.id);
   } else if (query.city) {
     posts = data.filter((p) => p.location == query.city);
   } else if (query.category) {
@@ -56,14 +54,14 @@ function filter(data, query) {
 
 export const getPosts = async (req, res) => {
   const category = req.query.cat;
-  const name = req.query.name;
+  const id = req.query.id;
   const city = req.query.city;
   const search = req.query.search;
   try {
     let posts;
     if (search) {
       // search
-      console.log("1");
+      console.log("2");
       posts = await Post.find({
         $or: [
           { title: { $regex: req.query.search } },
@@ -71,41 +69,15 @@ export const getPosts = async (req, res) => {
           { companyName: { $regex: req.query.search } },
         ],
       });
-      if (category != null || name != null || city != null) {
+      if (category != null || id != null || city != null) {
         //search and queries
         posts = filter(posts, req.query);
       }
-    } else if (category != null || name != null || city != null) {
+    } else if (category != null || id != null || city != null) {
       // querries
-      console.log("2");
       let data = await Post.find();
       posts = filter(data, req.query);
-      // if (name && category && city) {
-      //   posts = data.filter(
-      //     (p) =>
-      //       p.companyName == name &&
-      //       p.location == city &&
-      //       p.category == category
-      //   );
-      // } else if (name && category) {
-      //   posts = data.filter(
-      //     (p) => p.companyName == name && p.category == category
-      //   );
-      // } else if (name && city) {
-      //   posts = data.filter((p) => p.companyName == name && p.location == city);
-      // } else if (category && city) {
-      //   posts = data.filter(
-      //     (p) => p.location == city && p.category == category
-      //   );
-      // } else if (name) {
-      //   posts = data.filter((p) => p.companyName == name);
-      // } else if (city) {
-      //   posts = data.filter((p) => p.location == city);
-      // } else if (category) {
-      //   posts = data.filter((p) => p.category == category);
-      // }
     } else {
-      console.log("3");
       posts = await Post.find();
     }
 
@@ -136,6 +108,11 @@ export const getPost = async (req, res) => {
 export const updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+    if (post.company != req.user.id)
+      return res
+        .status(403)
+        .json({ message: "You can only update Your posts" });
     try {
       const updatedPost = await Post.findByIdAndUpdate(
         req.params.id,
@@ -154,6 +131,11 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+    if (post.company != req.user.id)
+      return res
+        .status(403)
+        .json({ message: "You can only update Your posts" });
     try {
       await post.delete();
       return res.status(200).json("Post has been deleted");

@@ -13,6 +13,7 @@ export const register = async (req, res) => {
     }
 
     let emailRegex =
+      // eslint-disable-next-line
       /([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+/;
 
     let valid = emailRegex.test(email);
