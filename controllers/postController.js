@@ -21,47 +21,11 @@ export const createPost = async (req, res) => {
   }
 };
 
-function filter(data, query) {
-  let posts;
-  if (query.id && query.category && query.city) {
-    posts = data.filter(
-      (p) =>
-        p.company == query.id &&
-        p.location == query.city &&
-        p.category == query.category
-    );
-  } else if (query.id && query.category) {
-    posts = data.filter(
-      (p) => p.company == query.id && p.category == query.category
-    );
-  } else if (query.id && query.city) {
-    posts = data.filter(
-      (p) => p.company == query.id && p.location == query.city
-    );
-  } else if (query.category && query.city) {
-    posts = data.filter(
-      (p) => p.location == query.city && p.category == query.category
-    );
-  } else if (query.id) {
-    posts = data.filter((p) => p.company == query.id);
-  } else if (query.city) {
-    posts = data.filter((p) => p.location == query.city);
-  } else if (query.category) {
-    posts = data.filter((p) => p.category == query.category);
-  }
-  return posts;
-}
-
 export const getPosts = async (req, res) => {
-  const category = req.query.cat;
-  const id = req.query.id;
-  const city = req.query.city;
-  const search = req.query.search;
   try {
     let posts;
-    if (search) {
+    if (req.query.search) {
       // search
-      console.log("2");
       posts = await Post.find({
         $or: [
           { title: { $regex: req.query.search } },
@@ -69,25 +33,23 @@ export const getPosts = async (req, res) => {
           { companyName: { $regex: req.query.search } },
         ],
       });
-      if (category != null || id != null || city != null) {
+      if (!(Object.keys(req.query).length === 0)) {
         //search and queries
-        posts = filter(posts, req.query);
+        posts = await filter(req.query);
       }
-    } else if (category != null || id != null || city != null) {
+    } else if (!(Object.keys(req.query).length === 0)) {
       // querries
-      let data = await Post.find();
-      posts = filter(data, req.query);
+      posts = await filter(req.query);
     } else {
       posts = await Post.find();
     }
 
-    if (!posts) {
+    if (!posts || posts.length == 0) {
       return res.status(404).json({ message: "No Posts found." });
     }
-
     return res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -146,3 +108,13 @@ export const deletePost = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+async function filter(query) {
+  let qry = {};
+  query.id && (qry.company = query.id);
+  query.city && (qry.location = query.city);
+  query.cat && (qry.category = query.category);
+
+  let posts = await Post.find(qry);
+  return posts;
+}
