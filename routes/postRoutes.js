@@ -8,6 +8,7 @@ import {
   deletePost,
 } from "../controllers/postController.js";
 import { protect } from "../middleware/auth.js";
+
 const router = Router();
 
 /**

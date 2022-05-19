@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { login, register } from "../controllers/authController.js";
-import { upload } from "../middleware/images.js";
+import { Router } from 'express';
+import { login, register } from '../controllers/authController.js';
+import { upload } from '../middleware/images.js';
 
 const router = Router();
 
@@ -41,7 +41,7 @@ const router = Router();
  *      500:
  *        description: Something went wrong
  */
-router.post("/login", login);
+router.post('/login', login);
 
 /**
  * @swagger
@@ -68,6 +68,6 @@ router.post("/login", login);
  *      500:
  *        description: Something went wrong
  */
-router.post("/register", upload.single("profilePicture"), register);
+router.post('/register', upload.single('profilePicture'), register);
 
 export default router;
