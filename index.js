@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import { createRequire } from "module";
+import swaggerDocs from "./utils/swagger.js";
 import authRoutes from "./routes/authRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
@@ -29,7 +30,8 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connected to mongodb"))
-  .then(() =>
-    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
-  )
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+    swaggerDocs(app, PORT);
+  })
   .catch((error) => console.log(error.message));

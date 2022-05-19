@@ -1,5 +1,31 @@
 import mongoose from "mongoose";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Company:
+ *       type: object
+ *       required:
+ *        - companyName
+ *        - email
+ *        - password
+ *       properties:
+ *         companyName:
+ *           type: string
+ *           example: "Company LLC"
+ *         profilePhoto:
+ *           type: string
+ *           default: ""
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: "email@email.com"
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: "Password123%"
+ */
 const companySchema = mongoose.Schema(
   {
     companyName: {
