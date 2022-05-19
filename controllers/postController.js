@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import Company from "../models/companyModel.js";
 import Post from "../models/postModel.js";
 
@@ -21,6 +22,16 @@ export const createPost = async (req, res) => {
   }
 };
 
+async function filter(query) {
+  const qry = {};
+  query.id && (qry.company = query.id);
+  query.city && (qry.location = query.city);
+  query.cat && (qry.category = query.category);
+
+  const posts = await Post.find(qry);
+  return posts;
+}
+
 export const getPosts = async (req, res) => {
   try {
     let posts;
@@ -34,7 +45,7 @@ export const getPosts = async (req, res) => {
         ],
       });
       if (!(Object.keys(req.query).length === 0)) {
-        //search and queries
+        // search and queries
         posts = await filter(req.query);
       }
     } else if (!(Object.keys(req.query).length === 0)) {
@@ -71,15 +82,16 @@ export const updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
-    if (post.company != req.user.id)
+    if (post.company != req.user.id) {
       return res
         .status(403)
         .json({ message: "You can only update Your posts" });
+    }
     try {
       const updatedPost = await Post.findByIdAndUpdate(
         req.params.id,
         { $set: req.body },
-        { new: true }
+        { new: true },
       );
       return res.status(200).json(updatedPost);
     } catch (error) {
@@ -94,10 +106,11 @@ export const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
-    if (post.company != req.user.id)
+    if (post.company != req.user.id) {
       return res
         .status(403)
         .json({ message: "You can only update Your posts" });
+    }
     try {
       await post.delete();
       return res.status(200).json("Post has been deleted");
@@ -108,13 +121,3 @@ export const deletePost = async (req, res) => {
     res.status(500).json(error);
   }
 };
-
-async function filter(query) {
-  let qry = {};
-  query.id && (qry.company = query.id);
-  query.city && (qry.location = query.city);
-  query.cat && (qry.category = query.category);
-
-  let posts = await Post.find(qry);
-  return posts;
-}

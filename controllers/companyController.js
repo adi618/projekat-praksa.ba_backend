@@ -34,7 +34,7 @@ export const updateCompany = async (req, res) => {
       return res.status(404).json({ message: "Account doesn't exist." });
     }
 
-    if (company._id == req.user.id) {
+    if (company.id == req.user.id) {
       if (req.body.password) {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
@@ -43,7 +43,7 @@ export const updateCompany = async (req, res) => {
         const updatedCompany = await Company.findByIdAndUpdate(
           req.params.id,
           { $set: req.body },
-          { new: true }
+          { new: true },
         );
         res.status(200).json(updatedCompany);
       } catch (error) {
@@ -66,7 +66,7 @@ export const deleteCompany = async (req, res) => {
       return res.status(404).json({ message: "Account doesn't exist." });
     }
 
-    if (company._id == req.user.id) {
+    if (company.id == req.user.id) {
       try {
         await Company.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Account deleted" });

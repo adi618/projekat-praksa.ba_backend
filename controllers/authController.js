@@ -3,20 +3,21 @@ import bcrypt from "bcrypt";
 import User from "../models/companyModel.js";
 
 export const register = async (req, res) => {
-  const { companyName, profilePhoto, email, password, confirmPassword } =
-    req.body;
+  const {
+    companyName, profilePhoto, email, password, confirmPassword,
+  } = req.body;
   try {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(403).json({ message: "User already exist." });
     }
-
-    let emailRegex =
+    // eslint-disable-next-line
+    const emailRegex =
       // eslint-disable-next-line
       /([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+/;
 
-    let valid = emailRegex.test(email);
+    const valid = emailRegex.test(email);
     if (!valid) return res.status(400).json({ message: "Invalid email" });
 
     if (password !== confirmPassword) {
@@ -44,9 +45,8 @@ export const register = async (req, res) => {
 
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
 
-    res.status(200).json({ user, token });
+    return res.status(200).json({ user, token });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
@@ -62,7 +62,7 @@ export const login = async (req, res) => {
 
     const isPasswordCorrect = await bcrypt.compare(
       password,
-      existingUser.password
+      existingUser.password,
     );
 
     if (!isPasswordCorrect) {
@@ -70,13 +70,17 @@ export const login = async (req, res) => {
     }
 
     const { id, companyName, profilePhoto } = existingUser;
-    const user = { id, companyName, profilePhoto, email };
+    const user = {
+      id,
+      companyName,
+      profilePhoto,
+      email,
+    };
 
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
 
-    res.status(200).json({ user, token });
+    return res.status(200).json({ user, token });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };

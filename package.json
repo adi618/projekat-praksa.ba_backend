@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint ./",
+    "lint": "eslint --fix .",
     "start": "nodemon index.js"
   },
   "keywords": [],
