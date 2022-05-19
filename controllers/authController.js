@@ -84,3 +84,14 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+export const verifyToken = async (req, res) => {
+  const { token } = req;
+  try {
+    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+    const user = await User.findById(decodedToken.id);
+    return res.status(200).json({ user, token });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};

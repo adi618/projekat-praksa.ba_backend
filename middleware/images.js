@@ -1,10 +1,11 @@
+/* eslint-disable import/prefer-default-export */
 import multer from "multer";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, callback) {
+  destination(req, file, callback) {
     callback(null, "./profilePictures/");
   },
-  filename: function (req, file, callback) {
+  filename(req, file, callback) {
     callback(null, Date.now() + file.originalname);
   },
 });
@@ -15,15 +16,15 @@ const fileFilter = (req, file, callback) => {
   } else {
     callback(
       new Error("Filetype not supported. Please upload .png or .jpg"),
-      false
+      false,
     ); // deny file
   }
 };
 
 export const upload = multer({
-  storage: storage,
+  storage,
   limits: {
     fileSize: 1024 * 1024 * 8,
   },
-  fileFilter: fileFilter,
+  fileFilter,
 });

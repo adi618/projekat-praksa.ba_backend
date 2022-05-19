@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import jwt from "jsonwebtoken";
 import User from "../models/companyModel.js";
 
@@ -5,15 +6,14 @@ const protect = async (req, res, next) => {
   let token;
 
   if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization
+    && req.headers.authorization.startsWith("Bearer")
   ) {
-    console.log("Kenan");
     try {
       token = req.headers.authorization.split(" ")[1];
-      console.log(token);
+      req.token = token;
+      // console.log(token);
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-
       req.user = await User.findById(decoded.id);
       next();
     } catch (error) {
@@ -26,4 +26,5 @@ const protect = async (req, res, next) => {
   }
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export { protect };

@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { login, register } from '../controllers/authController.js';
+import { login, register, verifyToken } from '../controllers/authController.js';
+import { protect } from '../middleware/auth.js';
 import { upload } from '../middleware/images.js';
 
 const router = Router();
@@ -69,5 +70,26 @@ router.post('/login', login);
  *        description: Something went wrong
  */
 router.post('/register', upload.single('profilePicture'), register);
+
+/**
+ * @swagger
+ * '/api/verify-token':
+ *  get:
+ *     tags:
+ *     - Auth
+ *     summary: Verify if token is valid
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *          application/json:
+ *           schema:
+ *              $ref: '#/components/schemas/Company'
+ *       401:
+ *         description: Not authorized
+ *       500:
+ *         description: Something went wrong
+ */
+router.get("/verify-token", protect, verifyToken);
 
 export default router;
