@@ -59,6 +59,10 @@ const companySchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    isEmailConfirmed: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

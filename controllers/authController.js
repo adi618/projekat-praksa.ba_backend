@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/companyModel.js";
+import sendEmailVerification from "../utils/email.js";
 
 export const register = async (req, res) => {
   const {
@@ -48,8 +49,8 @@ export const register = async (req, res) => {
       city,
       address,
     };
-
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
+    sendEmailVerification(user);
 
     return res.status(200).json({ user, token });
   } catch (error) {
@@ -60,10 +61,14 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).select("+password");
 
     if (!existingUser) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    if (!existingUser.isEmailConfirmed) {
+      return res.status(401).json({ message: "Please verify Your email to login" });
     }
 
     const isPasswordCorrect = await bcrypt.compare(
@@ -76,6 +81,7 @@ export const login = async (req, res) => {
     }
 
     const { id, companyName, profilePhoto } = existingUser;
+
     const user = {
       id,
       companyName,
@@ -100,4 +106,14 @@ export const verifyToken = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
+};
+
+export const confirmEmail = async (req, res) => {
+  try {
+    const decoded = jwt.verify(req.params.token, process.env.EMAIL_SECRET);
+    await User.findByIdAndUpdate(decoded.id, { isEmailConfirmed: true });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+  return res.redirect('http://localhost:3000/api/login');
 };

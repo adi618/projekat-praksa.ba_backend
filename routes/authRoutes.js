@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { login, register, verifyToken } from '../controllers/authController.js';
+import {
+  login, register, verifyToken, confirmEmail,
+} from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 import { upload } from '../middleware/images.js';
 
@@ -91,5 +93,7 @@ router.post('/register', upload.single('profilePicture'), register);
  *         description: Something went wrong
  */
 router.get("/verify-token", protect, verifyToken);
+
+router.get("/confirmation/:token", confirmEmail);
 
 export default router;
