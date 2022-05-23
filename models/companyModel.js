@@ -45,6 +45,7 @@ const companySchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     industry: {
       type: String,

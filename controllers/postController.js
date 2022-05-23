@@ -33,7 +33,7 @@ async function filter(query) {
   query.city && (qry.location = query.city);
   query.cat && (qry.category = query.category);
 
-  const posts = await Post.find(qry);
+  const posts = await Post.find(qry).populate("company").select("-password");
   return posts;
 }
 
@@ -57,7 +57,7 @@ export const getPosts = async (req, res) => {
       // querries
       posts = await filter(req.query);
     } else {
-      posts = await Post.find();
+      posts = await Post.find().populate("company", "-password");
     }
 
     if (!posts || posts.length == 0) {
