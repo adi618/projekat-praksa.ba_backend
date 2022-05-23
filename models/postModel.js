@@ -44,21 +44,49 @@ const postSchema = mongoose.Schema(
       required: true,
     },
     startDate: {
-      type: String,
+      type: Date,
       required: true,
     },
-    duration: {
-      type: String,
+    endDate: {
+      type: Date,
       required: true,
     },
-    location: {
-      type: String,
+    applicationDue: {
+      type: Date,
       required: true,
     },
+    location: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     category: {
       type: String,
       required: true,
     },
+    seniority: [
+      {
+        type: String,
+        enum: ["Intern", "Junior", "Medior", "Senior"],
+        required: true,
+      },
+    ],
+    workTimeType: [
+      {
+        type: String,
+        enum: ["Part-time", "Full time"],
+        required: true,
+      },
+    ],
+    workLocationType: [
+      {
+        type: String,
+        enum: ["Remote", "On-site", "Mix"],
+        required: true,
+      },
+    ],
+    technologies: [{ type: String }],
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",

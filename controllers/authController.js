@@ -4,7 +4,7 @@ import User from "../models/companyModel.js";
 
 export const register = async (req, res) => {
   const {
-    companyName, profilePhoto, email, password, confirmPassword,
+    companyName, profilePhoto, email, password, confirmPassword, industry, city, address,
   } = req.body;
   try {
     const existingUser = await User.findOne({ email });
@@ -26,12 +26,15 @@ export const register = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
-
+    const profilePicture = req.file ? req.file.path : "";
     const newUser = new User({
       companyName,
-      profilePhoto: req.file.path,
+      profilePhoto: profilePicture,
       email,
       password: hashedPass,
+      industry,
+      city,
+      address,
     });
 
     const addedUser = await newUser.save();
@@ -41,6 +44,9 @@ export const register = async (req, res) => {
       companyName,
       profilePhoto,
       email,
+      industry,
+      city,
+      address,
     };
 
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
