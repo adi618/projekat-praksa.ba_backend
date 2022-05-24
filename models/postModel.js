@@ -65,13 +65,6 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    seniority: [
-      {
-        type: String,
-        enum: ["Intern", "Junior", "Medior", "Senior"],
-        required: true,
-      },
-    ],
     workTimeType: [
       {
         type: String,
@@ -86,7 +79,6 @@ const postSchema = mongoose.Schema(
         required: true,
       },
     ],
-    technologies: [{ type: String }],
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",

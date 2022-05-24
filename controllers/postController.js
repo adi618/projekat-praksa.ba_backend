@@ -12,10 +12,8 @@ export const createPost = async (req, res) => {
     applicationDue: req.body.applicationDue,
     location: req.body.location,
     category: req.body.category,
-    seniority: req.body.seniority,
     workTimeType: req.body.workTimeType,
     workLocationType: req.body.workLocationType,
-    technologies: req.body.technologies,
     company: req.user.id,
     companyName: user.companyName,
   });
@@ -71,7 +69,7 @@ export const getPosts = async (req, res) => {
 
 export const getPost = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate("company", "-password");
 
     if (!post) {
       return res.status(404).json({ message: "Post with given id not found." });
