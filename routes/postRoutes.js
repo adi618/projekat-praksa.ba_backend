@@ -153,12 +153,8 @@ router.put("/:id", protect, updatePost);
  *        description: The id of the post
  *        required: true
  *     responses:
- *      200:
- *        description: Success
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/Post'
+ *      204:
+ *        description: The Post was deleted successfully.
  *      404:
  *        description: Post not found
  *      500:

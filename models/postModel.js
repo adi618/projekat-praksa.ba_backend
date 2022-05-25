@@ -38,12 +38,12 @@ import mongoose from "mongoose";
  *           type: array
  *           items:
  *            type: string
- *            example: ["Remote", "Sarajevo", "Zenica"]
+ *           example: ["Remote", "Sarajevo", "Zenica"]
  *         workTimeType:
  *           type: array
  *           items:
  *            type: string
- *            example: ["Full time", "Part-time"]
+ *           example: ["Full time", "Part-time"]
  *         category:
  *           type: string
  *           example: "IT"

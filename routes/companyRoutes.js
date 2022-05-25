@@ -102,12 +102,8 @@ router.put("/:id", protect, updateCompany);
  *        description: The id of the company
  *        required: true
  *     responses:
- *      200:
- *        description: Success
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/Company'
+ *      204:
+ *        description: The Post was deleted successfully.
  *      404:
  *        description: Company not found
  *      500:

@@ -17,7 +17,9 @@ export const createPost = async (req, res) => {
     companyName: user.companyName,
   });
   try {
-    const savedPost = await newPost.save();
+    let savedPost = await newPost.save();
+    savedPost = savedPost.toObject();
+    savedPost.company = user;
     return res.status(200).json(savedPost);
   } catch (error) {
     res.status(500).json(error);
