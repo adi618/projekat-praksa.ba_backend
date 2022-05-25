@@ -13,7 +13,6 @@ export const createPost = async (req, res) => {
     location: req.body.location,
     category: req.body.category,
     workTimeType: req.body.workTimeType,
-    workLocationType: req.body.workLocationType,
     company: req.user.id,
     companyName: user.companyName,
   });

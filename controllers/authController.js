@@ -5,7 +5,7 @@ import sendEmailVerification from "../utils/email.js";
 
 export const register = async (req, res) => {
   const {
-    companyName, profilePhoto, email, password, confirmPassword, industry, city, address,
+    companyName, profilePhoto, email, password, confirmPassword, industry,
   } = req.body;
   try {
     const existingUser = await User.findOne({ email });
@@ -34,8 +34,6 @@ export const register = async (req, res) => {
       email,
       password: hashedPass,
       industry,
-      city,
-      address,
     });
 
     const addedUser = await newUser.save();
@@ -46,8 +44,6 @@ export const register = async (req, res) => {
       profilePhoto,
       email,
       industry,
-      city,
-      address,
     };
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
     sendEmailVerification(user);

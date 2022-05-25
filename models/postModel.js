@@ -72,13 +72,6 @@ const postSchema = mongoose.Schema(
         required: true,
       },
     ],
-    workLocationType: [
-      {
-        type: String,
-        enum: ["Remote", "On-site", "Mix"],
-        required: true,
-      },
-    ],
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
