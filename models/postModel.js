@@ -10,9 +10,11 @@ import mongoose from "mongoose";
  *        - title
  *        - description
  *        - startDate
- *        - duration
+ *        - endDate
+ *        - applicationDue
  *        - location
  *        - category
+ *        - workTimeType
  *       properties:
  *         title:
  *           type: string
@@ -22,16 +24,37 @@ import mongoose from "mongoose";
  *           example: "Post Description"
  *         startDate:
  *           type: string
+ *           format: date
  *           example: "2022-01-01"
- *         duration:
+ *         endDate:
  *           type: string
- *           example: "30 days"
+ *           format: date
+ *           example: "2022-01-01"
+ *         applicationDue:
+ *           format: date
+ *           type: string
+ *           example: "2022-01-01"
  *         location:
- *           type: string
- *           example: "Ulica 12, Sarajevo 71000, BiH"
+ *           type: array
+ *           items:
+ *            type: string
+ *            example: ["Remote", "Sarajevo", "Zenica"]
+ *         workTimeType:
+ *           type: array
+ *           items:
+ *            type: string
+ *            example: ["Full time", "Part-time"]
  *         category:
  *           type: string
  *           example: "IT"
+ *         company:
+ *           readOnly: true
+ *           All of:
+ *            - $ref: '#/components/schemas/Company'
+ *         companyName:
+ *           type: string
+ *           readOnly: true
+ *           example: "Mistral"
  */
 const postSchema = mongoose.Schema(
   {

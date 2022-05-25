@@ -48,7 +48,7 @@ export const register = async (req, res) => {
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
     sendEmailVerification(user);
 
-    return res.status(200).json({ user, token });
+    return res.status(200).json({ user, token, message: "A confirmation link has been sent to Your email. Please confirm Your email to proceed to login" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }

@@ -16,6 +16,7 @@ import mongoose from "mongoose";
  *           example: "Company LLC"
  *         profilePhoto:
  *           type: string
+ *           readOnly: true
  *           default: ""
  *         email:
  *           type: string
@@ -23,6 +24,7 @@ import mongoose from "mongoose";
  *           example: "email@email.com"
  *         password:
  *           type: string
+ *           writeOnly: true
  *           format: password
  *           example: "Password123%"
  */
