@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-expressions */
 import Company from "../models/companyModel.js";
 import Post from "../models/postModel.js";
+import paginatedResults from "../utils/paginatedResults.js";
 
 export const createPost = async (req, res) => {
   const user = await Company.findById(req.user.id).select("-password");
@@ -26,40 +26,11 @@ export const createPost = async (req, res) => {
   }
 };
 
-async function filter(query) {
-  const qry = {};
-  query.id && (qry.company = query.id);
-  query.city && (qry.location = query.city);
-  query.cat && (qry.category = query.category);
-
-  const posts = await Post.find(qry).populate("company").select("-password");
-  return posts;
-}
-
 export const getPosts = async (req, res) => {
   try {
-    let posts;
-    if (req.query.search) {
-      // search
-      posts = await Post.find({
-        $or: [
-          { title: { $regex: req.query.search } },
-          { location: { $regex: req.query.search } },
-          { companyName: { $regex: req.query.search } },
-        ],
-      });
-      if (!(Object.keys(req.query).length === 0)) {
-        // search and queries
-        posts = await filter(req.query);
-      }
-    } else if (!(Object.keys(req.query).length === 0)) {
-      // querries
-      posts = await filter(req.query);
-    } else {
-      posts = await Post.find().populate("company", "-password");
-    }
+    const posts = await paginatedResults(Post, req.query);
 
-    if (!posts || posts.length == 0) {
+    if (!posts || posts.results.length == 0) {
       return res.status(404).json({ message: "No Posts found." });
     }
     return res.status(200).json(posts);
