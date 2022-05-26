@@ -1,27 +1,27 @@
 /* eslint-disable no-unused-expressions */
-const paginatedResults = async (model, query) => {
-  const page = parseInt(query.page, 10);
-  const limit = parseInt(query.limit, 10);
+const paginatedResults = async (model, params) => {
+  const page = parseInt(params.page, 10);
+  const limit = parseInt(params.limit, 10);
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
   const results = {};
-  const qry = {};
+  const queryObject = {};
 
-  query.id && (qry.company = query.id);
-  query.city && (qry.location = query.city);
-  query.cat && (qry.category = query.cat);
+  params.id && (queryObject.company = params.id);
+  params.city && (queryObject.location = params.city);
+  params.cat && (queryObject.category = params.cat);
 
   try {
-    if (query.search && (query.id || query.city || query.cat)) {
+    if (params.search && (params.id || params.city || params.cat)) {
       results.results = await model
         .find({
           $and: [
-            qry,
+            queryObject,
             {
               $or: [
-                { title: { $regex: query.search } },
-                { location: { $regex: query.search } },
-                { companyName: { $regex: query.search } },
+                { title: { $regex: params.search } },
+                { location: { $regex: params.search } },
+                { companyName: { $regex: params.search } },
               ],
             },
           ],
@@ -31,13 +31,13 @@ const paginatedResults = async (model, query) => {
         .limit(limit)
         .skip(startIndex)
         .exec();
-    } else if (query.search) {
+    } else if (params.search) {
       results.results = await model
         .find({
           $or: [
-            { title: { $regex: query.search } },
-            { location: { $regex: query.search } },
-            { companyName: { $regex: query.search } },
+            { title: { $regex: params.search } },
+            { location: { $regex: params.search } },
+            { companyName: { $regex: params.search } },
           ],
         })
         .populate("company")
@@ -45,9 +45,9 @@ const paginatedResults = async (model, query) => {
         .limit(limit)
         .skip(startIndex)
         .exec();
-    } else if (query.id || query.city || query.cat) {
+    } else if (params.id || params.city || params.cat) {
       results.results = await model
-        .find(qry)
+        .find(queryObject)
         .populate("company")
         .select("-password")
         .limit(limit)

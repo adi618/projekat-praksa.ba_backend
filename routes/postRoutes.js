@@ -68,6 +68,18 @@ router.post("/", protect, createPost);
  *          type: string
  *        description: query parameter to filter posts by category
  *        required: false
+ *      - name: page
+ *        in: query
+ *        schema:
+ *          type: number
+ *        description: query parameter to filter tickets by page
+ *        required: false
+ *      - name: limit
+ *        in: query
+ *        schema:
+ *          type: number
+ *        description: query parameter to filter ticket results by page
+ *        required: false
  *     responses:
  *       200:
  *         description: Success
