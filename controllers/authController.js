@@ -107,7 +107,7 @@ export const verifyToken = async (req, res) => {
 export const confirmEmail = async (req, res) => {
   try {
     const decoded = jwt.verify(req.params.token, process.env.EMAIL_SECRET);
-    await User.findByIdAndUpdate(decoded.id, { isEmailConfirmed: true });
+    await User.findByIdAndUpdate(decoded.id, { isEmailConfirmed: true }, { strict: false });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }

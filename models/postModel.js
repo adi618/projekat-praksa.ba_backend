@@ -98,9 +98,11 @@ const postSchema = mongoose.Schema(
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
+      immutable: true,
     },
     companyName: {
       type: String,
+      immutable: true,
     },
   },
   { timestamps: true },

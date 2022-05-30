@@ -233,11 +233,12 @@ const validatePostUpdate = [
     .withMessage("Type of work cannot be empty")
     .bail(),
   check("workTimeType.*")
-    .optional()
     .not()
     .isEmpty()
     .withMessage("Work time type cannot be empty")
-    .bail(),
+    .bail()
+    .isIn(['Full time', 'Part-time'])
+    .withMessage("Work time type must be a 'Full time' or 'Part-time'"),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

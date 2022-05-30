@@ -56,6 +56,7 @@ const companySchema = mongoose.Schema(
     isEmailConfirmed: {
       type: Boolean,
       default: false,
+      immutable: true,
     },
   },
   { timestamps: true },
