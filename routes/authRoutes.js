@@ -4,6 +4,7 @@ import {
 } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 import { upload } from '../middleware/images.js';
+import { validateLogin, validateRegistration } from '../middleware/validators/authValidator.js';
 
 const router = Router();
 
@@ -44,7 +45,7 @@ const router = Router();
  *      500:
  *        description: Something went wrong
  */
-router.post('/login', login);
+router.post('/login', validateLogin, login);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post('/login', login);
  *      500:
  *        description: Something went wrong
  */
-router.post('/register', upload.single('profilePicture'), register);
+router.post('/register', validateRegistration, upload.single('profilePicture'), register);
 
 /**
  * @swagger

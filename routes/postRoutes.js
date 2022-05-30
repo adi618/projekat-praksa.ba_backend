@@ -8,6 +8,7 @@ import {
   deletePost,
 } from "../controllers/postController.js";
 import { protect } from "../middleware/auth.js";
+import { validatePostCreation, validatePostUpdate } from "../middleware/validators/postValidator.js";
 
 const router = Router();
 
@@ -34,7 +35,7 @@ const router = Router();
  *      500:
  *        description: Something went wrong
  */
-router.post("/", protect, createPost);
+router.post("/", protect, validatePostCreation, createPost);
 
 /**
  * @swagger
@@ -150,7 +151,7 @@ router.get("/:id", getPost);
  *      500:
  *        description: Something went wrong
  */
-router.put("/:id", protect, updatePost);
+router.put("/:id", protect, validatePostUpdate, updatePost);
 
 /**
  * @swagger

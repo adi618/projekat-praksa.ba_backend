@@ -7,6 +7,7 @@ import {
   deleteCompany,
 } from "../controllers/companyController.js";
 import { protect } from "../middleware/auth.js";
+import { validateCompanyUpdate } from "../middleware/validators/companyValidator.js";
 
 const router = Router();
 
@@ -87,7 +88,7 @@ router.get("/:id", getCompany);
  *      500:
  *        description: Something went wrong
  */
-router.put("/:id", protect, updateCompany);
+router.put("/:id", protect, validateCompanyUpdate, updateCompany);
 
 /**
  * @swagger
