@@ -11,40 +11,48 @@ const paginatedResults = async (model, params) => {
   params.city && (queryObject.location = params.city);
   params.cat && (queryObject.category = params.cat);
 
+  const searchAndParamsQuery = {
+    $and: [
+      queryObject,
+      {
+        $or: [
+          { title: { $regex: params.search } },
+          { location: { $regex: params.search } },
+          { companyName: { $regex: params.search } },
+        ],
+      },
+    ],
+  };
+
+  const searchQuery = {
+    $or: [
+      { title: { $regex: params.search } },
+      { location: { $regex: params.search } },
+      { companyName: { $regex: params.search } },
+    ],
+  };
+
   try {
     if (params.search && (params.id || params.city || params.cat)) {
       results.results = await model
-        .find({
-          $and: [
-            queryObject,
-            {
-              $or: [
-                { title: { $regex: params.search } },
-                { location: { $regex: params.search } },
-                { companyName: { $regex: params.search } },
-              ],
-            },
-          ],
-        })
+        .find(searchAndParamsQuery)
         .populate("company")
         .select("-password")
         .limit(limit)
         .skip(startIndex)
         .exec();
+
+      results.numberOfResults = await model.find(searchAndParamsQuery).count();
     } else if (params.search) {
       results.results = await model
-        .find({
-          $or: [
-            { title: { $regex: params.search } },
-            { location: { $regex: params.search } },
-            { companyName: { $regex: params.search } },
-          ],
-        })
+        .find(searchQuery)
         .populate("company")
         .select("-password")
         .limit(limit)
         .skip(startIndex)
         .exec();
+
+      results.numberOfResults = await model.find(searchQuery).count();
     } else if (params.id || params.city || params.cat) {
       results.results = await model
         .find(queryObject)
@@ -53,6 +61,8 @@ const paginatedResults = async (model, params) => {
         .limit(limit)
         .skip(startIndex)
         .exec();
+
+      results.numberOfResults = await model.find(queryObject).count();
     } else {
       results.results = await model
         .find()
@@ -61,9 +71,11 @@ const paginatedResults = async (model, params) => {
         .limit(limit)
         .skip(startIndex)
         .exec();
+
+      results.numberOfResults = await model.find().count();
     }
 
-    if (endIndex < (await model.countDocuments().exec())) {
+    if (endIndex < results.numberOfResults) {
       results.next = {
         page: page + 1,
         limit,
@@ -76,6 +88,8 @@ const paginatedResults = async (model, params) => {
         limit,
       };
     }
+
+    results.numberOfPages = parseInt(results.numberOfResults / limit, 10) + 1;
 
     return results;
   } catch (err) {

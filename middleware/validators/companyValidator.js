@@ -24,7 +24,7 @@ const validateCompanyUpdate = [
     .isEmpty()
     .withMessage('Please provide a Password to update')
     .bail()
-    .isLength({ min: 5 })
+    .isLength({ min: 8, max: 20 })
     .withMessage('Password must contain at least 5 characters'),
   check("industry")
     .optional()

@@ -25,7 +25,7 @@ const validateRegistration = [
     .isEmpty()
     .withMessage('Password field cannot be empty')
     .bail()
-    .isLength({ min: 5 })
+    .isLength({ min: 8, max: 20 })
     .withMessage('Password must contain at least 5 characters'),
   check("confirmPassword")
     .exists()
