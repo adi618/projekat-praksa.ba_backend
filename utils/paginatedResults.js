@@ -6,6 +6,7 @@ const paginatedResults = async (model, params) => {
   const endIndex = page * limit;
   const results = {};
   const queryObject = {};
+  let tempRes;
 
   params.id && (queryObject.company = params.id);
   params.city && (queryObject.location = params.city);
@@ -64,18 +65,25 @@ const paginatedResults = async (model, params) => {
 
       results.numberOfResults = await model.find(queryObject).count();
     } else {
-      results.results = await model
-        .find()
-        .populate("company")
-        .select("-password")
-        .limit(limit)
-        .skip(startIndex)
-        .exec();
+      tempRes = await model.aggregate([
+        { $match: {} },
+        // { $sort: { [sort]: order } },
+        // { $project: { password: 0, avatarData: 0, tokens: 0 } },
+        {
+          $facet: {
+            posts: [{ $skip: startIndex }, { $limit: limit }],
+            totalCount: [{ $count: 'count' }],
+          },
+        },
+      ]);
 
-      results.numberOfResults = await model.find().count();
+      results.results = tempRes[0].posts;
+    // console.log(results.results[0]);
+    // console.log({ users: result[0].users });
+    // console.log(result[0].totalCount[0].count);
     }
 
-    if (endIndex < results.numberOfResults) {
+    if (endIndex < parseInt(tempRes[0].totalCount[0].count, 10)) {
       results.next = {
         page: page + 1,
         limit,
@@ -89,8 +97,9 @@ const paginatedResults = async (model, params) => {
       };
     }
 
-    results.numberOfPages = parseInt(results.numberOfResults / limit, 10) + 1;
-
+    const pageNum = parseInt(tempRes[0].totalCount[0].count / limit, 10);
+    results.numberOfPages = limit == 1
+      ? pageNum : pageNum + 1;
     return results;
   } catch (err) {
     return { message: err.message };
