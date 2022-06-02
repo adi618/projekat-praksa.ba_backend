@@ -10,7 +10,7 @@ export const getCompanies = async (req, res) => {
 
     res.status(200).json(companies);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(404).json({ message: "No companies found" });
   }
 };
 
@@ -23,7 +23,7 @@ export const getCompany = async (req, res) => {
 
     res.status(200).json(company);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(404).json({ message: "Company not found" });
   }
 };
 

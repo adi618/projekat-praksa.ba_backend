@@ -27,16 +27,16 @@ export const createPost = async (req, res) => {
 };
 
 export const getPosts = async (req, res) => {
-  try {
-    const posts = await paginatedResults(Post, req.query);
+  // try {
+  const posts = await paginatedResults(Post, req.query);
 
-    if (!posts || posts.results.length == 0) {
-      return res.status(404).json({ message: "No Posts found." });
-    }
-    return res.status(200).json(posts);
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+  if (!posts || posts.results.length == 0) {
+    return res.status(404).json({ message: "No Posts found." });
   }
+  return res.status(200).json(posts);
+  // } catch (error) {
+  //   res.status(500).json({ message: "Something went wrong" });
+  // }
 };
 
 export const getPost = async (req, res) => {

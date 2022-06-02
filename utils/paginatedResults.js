@@ -1,29 +1,36 @@
 /* eslint-disable no-unused-expressions */
-const paginatedResults = async (model, params) => {
-  const page = parseInt(params.page, 10);
-  const limit = parseInt(params.limit, 10);
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const results = {};
-  const queryObject = {};
-  let tempRes;
+import mongoose from "mongoose";
+import Company from "../models/companyModel.js";
 
-  params.id && (queryObject.company = params.id);
-  params.city && (queryObject.location = params.city);
-  params.cat && (queryObject.category = params.cat);
+const queryResults = async (model, queryObject, skip = null, limit = null) => {
+  const postsProp = (skip != null && limit != null) ? [{ $skip: skip }, { $limit: limit }] : [];
 
-  const searchAndParamsQuery = {
-    $and: [
-      queryObject,
-      {
-        $or: [
-          { title: { $regex: params.search } },
-          { location: { $regex: params.search } },
-          { companyName: { $regex: params.search } },
-        ],
+  const tempRes = await model.aggregate([
+    { $match: queryObject },
+    // { $sort: { [sort]: order } },
+    {
+      $facet: {
+        posts: postsProp,
+        totalCount: [{ $count: 'count' }],
       },
-    ],
-  };
+    },
+  ]);
+
+  await Company.populate(tempRes[0].posts, { path: "company" });
+  return tempRes;
+};
+
+const paginatedResults = async (model, params) => {
+  const page = params.page ? parseInt(params.page, 10) : null;
+  const limit = params.limit ? parseInt(params.limit, 10) : null;
+  const startIndex = (page != null && limit != null) ? (page - 1) * limit : null;
+  const endIndex = (page != null && limit != null) ? page * limit : null;
+  const results = {};
+
+  const paramsQuery = {};
+  params.id && (paramsQuery.company = mongoose.Types.ObjectId(params.id));
+  params.city && (paramsQuery.location = params.city);
+  params.cat && (paramsQuery.category = params.cat);
 
   const searchQuery = {
     $or: [
@@ -33,73 +40,42 @@ const paginatedResults = async (model, params) => {
     ],
   };
 
+  const searchAndParamsQuery = {
+    $and: [
+      paramsQuery,
+      searchQuery,
+    ],
+  };
+
+  let result;
   try {
     if (params.search && (params.id || params.city || params.cat)) {
-      results.results = await model
-        .find(searchAndParamsQuery)
-        .populate("company")
-        .select("-password")
-        .limit(limit)
-        .skip(startIndex)
-        .exec();
-
-      results.numberOfResults = await model.find(searchAndParamsQuery).count();
+      result = await queryResults(model, searchAndParamsQuery, startIndex, limit);
     } else if (params.search) {
-      results.results = await model
-        .find(searchQuery)
-        .populate("company")
-        .select("-password")
-        .limit(limit)
-        .skip(startIndex)
-        .exec();
-
-      results.numberOfResults = await model.find(searchQuery).count();
+      result = await queryResults(model, searchQuery, startIndex, limit);
     } else if (params.id || params.city || params.cat) {
-      results.results = await model
-        .find(queryObject)
-        .populate("company")
-        .select("-password")
-        .limit(limit)
-        .skip(startIndex)
-        .exec();
-
-      results.numberOfResults = await model.find(queryObject).count();
+      result = await queryResults(model, paramsQuery, startIndex, limit);
     } else {
-      tempRes = await model.aggregate([
-        { $match: {} },
-        // { $sort: { [sort]: order } },
-        // { $project: { password: 0, avatarData: 0, tokens: 0 } },
-        {
-          $facet: {
-            posts: [{ $skip: startIndex }, { $limit: limit }],
-            totalCount: [{ $count: 'count' }],
-          },
-        },
-      ]);
-
-      results.results = tempRes[0].posts;
-    // console.log(results.results[0]);
-    // console.log({ users: result[0].users });
-    // console.log(result[0].totalCount[0].count);
+      result = await queryResults(model, {}, startIndex, limit);
     }
 
-    if (endIndex < parseInt(tempRes[0].totalCount[0].count, 10)) {
-      results.next = {
-        page: page + 1,
-        limit,
-      };
+    results.results = result[0].posts;
+    const resultsNum = result[0].totalCount[0].count;
+
+    if (params.page && params.limit) {
+      if (endIndex < parseInt(resultsNum, 10)) {
+        results.next = { page: page + 1 };
+      }
+
+      if (startIndex > 0) {
+        results.previous = { page: page - 1 };
+      }
+
+      const pagesNum = parseInt(resultsNum / limit, 10);
+      results.numberOfPages = limit == 1 || limit == resultsNum
+        ? pagesNum : pagesNum + 1;
     }
 
-    if (startIndex > 0) {
-      results.previous = {
-        page: page - 1,
-        limit,
-      };
-    }
-
-    const pageNum = parseInt(tempRes[0].totalCount[0].count / limit, 10);
-    results.numberOfPages = limit == 1
-      ? pageNum : pageNum + 1;
     return results;
   } catch (err) {
     return { message: err.message };
