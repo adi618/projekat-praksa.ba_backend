@@ -2,6 +2,14 @@
 import mongoose from "mongoose";
 import Company from "../models/companyModel.js";
 
+// function isValidObjectId(id) {
+//   if (mongoose.Types.ObjectId.isValid(id)) {
+//     if ((String)(new mongoose.Types.ObjectId(id)) === id) { return true; }
+//     return false;
+//   }
+//   return false;
+// }
+
 const queryResults = async (model, queryObject, skip = null, limit = null) => {
   const postsProp = (skip != null && limit != null) ? [{ $skip: skip }, { $limit: limit }] : [];
 
@@ -78,7 +86,7 @@ const paginatedResults = async (model, params) => {
 
     return results;
   } catch (err) {
-    return { message: err.message };
+    return { message: "Something went wrong" };
   }
 };
 

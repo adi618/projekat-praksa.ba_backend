@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Company from "../models/companyModel.js";
 import Post from "../models/postModel.js";
 import paginatedResults from "../utils/paginatedResults.js";
@@ -26,17 +27,30 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const getPosts = async (req, res) => {
-  // try {
-  const posts = await paginatedResults(Post, req.query);
-
-  if (!posts || posts.results.length == 0) {
-    return res.status(404).json({ message: "No Posts found." });
+function isValidObjectId(id) {
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    if ((String)(new mongoose.Types.ObjectId(id)) === id) { return true; }
+    return false;
   }
-  return res.status(200).json(posts);
-  // } catch (error) {
-  //   res.status(500).json({ message: "Something went wrong" });
-  // }
+  return false;
+}
+
+export const getPosts = async (req, res) => {
+  try {
+    if (req.params.id) {
+      if (!isValidObjectId(req.params.id)) {
+        throw new Error("Invalid Id");
+      }
+    }
+    const posts = await paginatedResults(Post, req.query);
+
+    if (!posts || posts.results.length == 0) {
+      return res.status(404).json({ message: "No Posts found." });
+    }
+    return res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
 
 export const getPost = async (req, res) => {
