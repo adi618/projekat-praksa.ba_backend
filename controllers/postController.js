@@ -23,7 +23,7 @@ export const createPost = async (req, res) => {
     savedPost.company = user;
     return res.status(200).json(savedPost);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json("Something went wrong");
   }
 };
 
@@ -37,19 +37,22 @@ function isValidObjectId(id) {
 
 export const getPosts = async (req, res) => {
   try {
-    if (req.params.id) {
-      if (!isValidObjectId(req.params.id)) {
-        throw new Error("Invalid Id");
-      }
+    if (req.query.id && (req.query.id == undefined || !isValidObjectId(req.query.id))) {
+      const error = new Error("Invalid Id format provided");
+      error.status = 400;
+      throw error;
     }
+
     const posts = await paginatedResults(Post, req.query);
 
-    if (!posts || posts.results.length == 0) {
+    if (!posts || !posts.results || posts.results.length == 0) {
       return res.status(404).json({ message: "No Posts found." });
     }
     return res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    const status = error.status || 500;
+    const message = status == 500 ? "Something went wrong" : error.message;
+    return res.status(status).json({ message });
   }
 };
 
@@ -63,7 +66,7 @@ export const getPost = async (req, res) => {
 
     return res.status(200).json(post);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json("Something went wrong");
   }
 };
 
@@ -87,7 +90,7 @@ export const updatePost = async (req, res) => {
       res.status(500).json(error);
     }
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json("Something went wrong");
   }
 };
 
@@ -104,9 +107,9 @@ export const deletePost = async (req, res) => {
       await post.delete();
       return res.status(200).json("Post has been deleted");
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500).json("Something went wrong");
     }
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json("Something went wrong");
   }
 };
