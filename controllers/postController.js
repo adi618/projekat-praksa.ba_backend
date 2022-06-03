@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+// eslint-disable-next-line import/named
 import Company from "../models/companyModel.js";
 import Post from "../models/postModel.js";
+import { catchError, isValidObjectId, throwError } from "../utils/error.js";
 import paginatedResults from "../utils/paginatedResults.js";
 
 export const createPost = async (req, res) => {
@@ -27,21 +28,9 @@ export const createPost = async (req, res) => {
   }
 };
 
-function isValidObjectId(id) {
-  if (mongoose.Types.ObjectId.isValid(id)) {
-    if ((String)(new mongoose.Types.ObjectId(id)) === id) { return true; }
-    return false;
-  }
-  return false;
-}
-
 export const getPosts = async (req, res) => {
   try {
-    if (req.query.id && (req.query.id == undefined || !isValidObjectId(req.query.id))) {
-      const error = new Error("Invalid Id format provided");
-      error.status = 400;
-      throw error;
-    }
+    if (req.query.id && !isValidObjectId(req.query.id)) { throwError(400, "Invalid Id format provided"); }
 
     const posts = await paginatedResults(Post, req.query);
 
@@ -50,28 +39,31 @@ export const getPosts = async (req, res) => {
     }
     return res.status(200).json(posts);
   } catch (error) {
-    const status = error.status || 500;
-    const message = status == 500 ? "Something went wrong" : error.message;
-    return res.status(status).json({ message });
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };
 
 export const getPost = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate("company", "-password");
+    if (!isValidObjectId(req.params.id)) throwError(400, "Invalid Id format provided");
 
+    const post = await Post.findById(req.params.id).populate("company", "-password");
     if (!post) {
       return res.status(404).json({ message: "Post with given id not found." });
     }
 
     return res.status(200).json(post);
   } catch (error) {
-    res.status(500).json("Something went wrong");
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };
 
 export const updatePost = async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) throwError(400, "Invalid Id format provided");
+
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
     if (post.company != req.user.id) {
@@ -87,15 +79,18 @@ export const updatePost = async (req, res) => {
       );
       return res.status(200).json(updatedPost);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500).json({ message: "Something went wrong" });
     }
   } catch (error) {
-    res.status(500).json("Something went wrong");
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };
 
 export const deletePost = async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) throwError(400, "Invalid Id format provided");
+
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
     if (post.company != req.user.id) {
@@ -107,9 +102,10 @@ export const deletePost = async (req, res) => {
       await post.delete();
       return res.status(200).json("Post has been deleted");
     } catch (error) {
-      res.status(500).json("Something went wrong");
+      res.status(500).json({ message: "Something went wrong" });
     }
   } catch (error) {
-    res.status(500).json("Something went wrong");
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };

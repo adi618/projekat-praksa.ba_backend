@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import Company from "../models/companyModel.js";
+import { catchError, isValidObjectId, throwError } from "../utils/error.js";
 
 export const getCompanies = async (req, res) => {
   try {
@@ -16,6 +17,8 @@ export const getCompanies = async (req, res) => {
 
 export const getCompany = async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) throwError(400, "Invalid Id format provided");
+
     const company = await Company.findById(req.params.id).select("-password");
     if (!company) {
       return res.status(404).json({ message: "Account doesn't exist." });
@@ -23,12 +26,15 @@ export const getCompany = async (req, res) => {
 
     res.status(200).json(company);
   } catch (error) {
-    res.status(404).json({ message: "Company not found" });
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };
 
 export const updateCompany = async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) throwError(400, "Invalid Id format provided");
+
     const company = await Company.findById(req.params.id);
     if (!company) {
       return res.status(404).json({ message: "Account doesn't exist." });
@@ -55,12 +61,15 @@ export const updateCompany = async (req, res) => {
         .json({ message: "You can only update Your account" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };
 
 export const deleteCompany = async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) throwError(400, "Invalid Id format provided");
+
     const company = await Company.findById(req.params.id);
     if (!company) {
       return res.status(404).json({ message: "Account doesn't exist." });
@@ -79,6 +88,7 @@ export const deleteCompany = async (req, res) => {
         .json({ message: "You can delete only your account" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    const response = catchError(error);
+    return res.status(response.status).json({ message: response.message });
   }
 };
