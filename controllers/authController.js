@@ -39,7 +39,7 @@ export const register = async (req, res) => {
     const addedUser = await newUser.save();
 
     const user = {
-      id: addedUser.id,
+      _id: addedUser.id,
       companyName,
       profilePhoto,
       email,
@@ -76,13 +76,17 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const { id, companyName, profilePhoto } = existingUser;
+    const {
+      _id, companyName, profilePhoto, industry, isEmailConfirmed,
+    } = existingUser;
 
     const user = {
-      id,
+      _id,
       companyName,
       profilePhoto,
       email,
+      industry,
+      isEmailConfirmed,
     };
 
     const token = jwt.sign(user, process.env.TOKEN_SECRET);
