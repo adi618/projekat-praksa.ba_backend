@@ -72,7 +72,7 @@ router.post('/login', validateLogin, login);
  *      500:
  *        description: Something went wrong
  */
-router.post('/register', validateRegistration, upload.single('profilePicture'), register);
+router.post('/register', upload.single('profilePicture'), validateRegistration, register);
 
 /**
  * @swagger

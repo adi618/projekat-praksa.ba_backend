@@ -101,7 +101,12 @@ export const verifyToken = async (req, res) => {
   const { token } = req;
   try {
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    const user = await User.findById(decodedToken.id);
+    const user = await User.findById(decodedToken._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     return res.status(200).json({ user, token });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
@@ -111,7 +116,8 @@ export const verifyToken = async (req, res) => {
 export const confirmEmail = async (req, res) => {
   try {
     const decoded = jwt.verify(req.params.token, process.env.EMAIL_SECRET);
-    await User.findByIdAndUpdate(decoded.id, { isEmailConfirmed: true }, { strict: false });
+    console.log(decoded);
+    await User.findByIdAndUpdate(decoded._id, { isEmailConfirmed: true }, { strict: false });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }

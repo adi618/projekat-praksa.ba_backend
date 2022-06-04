@@ -13,6 +13,7 @@
         "import/extensions": 0,
         "quotes": "off",
         "consistent-return": "off",
-        "eqeqeq": "off"
+        "eqeqeq": "off",
+        "no-underscore-dangle": "off"
     }
 }
