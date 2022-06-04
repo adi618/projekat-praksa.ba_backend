@@ -15,7 +15,7 @@ const queryResults = async (model, queryObject, skip = null, limit = null) => {
 
   const tempRes = await model.aggregate([
     { $match: queryObject },
-    // { $sort: { [sort]: order } },
+    { $sort: { createdAt: 1 } },
     {
       $facet: {
         posts: postsProp,
