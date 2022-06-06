@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from "multer";
 import {
   login, register, verifyToken, confirmEmail,
 } from '../controllers/authController.js';
@@ -45,7 +46,7 @@ const router = Router();
  *      500:
  *        description: Something went wrong
  */
-router.post('/login', validateLogin, login);
+router.post('/login', multer().any(), validateLogin, login);
 
 /**
  * @swagger

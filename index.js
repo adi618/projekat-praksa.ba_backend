@@ -3,13 +3,12 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { createRequire } from 'module';
-import multer from "multer";
 import swaggerDocs from './utils/swagger.js';
 import authRoutes from './routes/authRoutes.js';
 import companyRoutes from './routes/companyRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 
-const upload = multer();
+// const upload = multer();
 const require = createRequire(import.meta.url);
 require('dotenv').config();
 
@@ -17,7 +16,7 @@ const app = express();
 
 app.use(express.json({ limit: '30mb', extended: true }));
 app.use(express.urlencoded({ limit: '30mb', extended: true }));
-app.use(upload.any());
+// app.use(upload.any());
 app.use('/profilePictures', express.static('profilePictures'));
 app.use(cors());
 
