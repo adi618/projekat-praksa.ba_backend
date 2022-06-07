@@ -33,7 +33,6 @@ const companySchema = mongoose.Schema(
     companyName: {
       type: String,
       required: true,
-      unique: true,
     },
     profilePhoto: {
       type: String,
