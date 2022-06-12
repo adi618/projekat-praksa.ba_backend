@@ -35,7 +35,9 @@ const validatePostCreation = [
       const todayDate = new Date();
       todayDate.setHours(0, 0, 0, 0);
 
-      if (startDate <= todayDate) throw new Error('Start date must be after todays date');
+      if (startDate <= todayDate) {
+        throw new Error('Start date must be after todays date');
+      }
       return true;
     }),
   check("endDate")

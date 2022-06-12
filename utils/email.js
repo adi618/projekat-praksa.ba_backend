@@ -6,6 +6,7 @@ const sendEmailVerification = (user) => {
     host: 'smtp.gmail.com',
     port: 465,
     service: 'gmail',
+    secure: true,
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_PASS,
@@ -25,7 +26,7 @@ const sendEmailVerification = (user) => {
     from: process.env.GMAIL_USER,
     to: user.email,
     subject: 'Praksa.ba - Please confirm Your email',
-    html: `<b>Please click this link to confirm your email:</b> <a href="${url}">${url}</a><br><br><b>This link expires in one day</b>`,
+    html: `<b>Please click this link to confirm your email:</b> <a href="${url}">Click to confirm Your email</a><br><br><b>This link expires in one day</b>`,
   });
 };
 
