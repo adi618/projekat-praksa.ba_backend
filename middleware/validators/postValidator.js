@@ -77,7 +77,7 @@ const validatePostCreation = [
       const startDate = new Date(startYear, startMonth, startDay);
       const applicationDueDate = new Date(appDueYear, appDueMonth, appDueDay);
 
-      if (applicationDueDate < startDate) throw new Error('Application due date must be after start date');
+      if (applicationDueDate > startDate) throw new Error('Application due date must be before start date');
       return true;
     }),
   check("location")
