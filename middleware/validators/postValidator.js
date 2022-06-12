@@ -33,6 +33,8 @@ const validatePostCreation = [
       const [startYear, startMonth, startDay] = value.split('-');
       const startDate = new Date(startYear, startMonth, startDay);
       const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+
       if (startDate <= todayDate) throw new Error('Start date must be after todays date');
       return true;
     }),
@@ -75,7 +77,7 @@ const validatePostCreation = [
       const startDate = new Date(startYear, startMonth, startDay);
       const applicationDueDate = new Date(appDueYear, appDueMonth, appDueDay);
 
-      if (applicationDueDate <= startDate) throw new Error('Application due date must be after start date');
+      if (applicationDueDate < startDate) throw new Error('Application due date must be after start date');
       return true;
     }),
   check("location")
