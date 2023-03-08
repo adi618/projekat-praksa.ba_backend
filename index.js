@@ -1,18 +1,30 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
+/* eslint-disable no-console */
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import { createRequire } from 'module';
+import swaggerDocs from './utils/swagger.js';
+import authRoutes from './routes/authRoutes.js';
+import companyRoutes from './routes/companyRoutes.js';
+import postRoutes from './routes/postRoutes.js';
 
-import { createRequire } from "module";
+// const upload = multer();
 const require = createRequire(import.meta.url);
-require("dotenv").config();
+require('dotenv').config();
 
 const app = express();
 
-app.use(express.json({ limit: "30mb", extended: true }));
-app.use(express.urlencoded({ limit: "30mb", extended: true }));
+app.use(express.json({ limit: '30mb', extended: true }));
+app.use(express.urlencoded({ limit: '30mb', extended: true }));
+// app.use(upload.any());
+app.use('/profilePictures', express.static('profilePictures'));
 app.use(cors());
 
-const CONNECTION_URL = process.env.CONNECTION_URL;
+app.use('/api', authRoutes);
+app.use('/api/companies', companyRoutes);
+app.use('/api/posts', postRoutes);
+
+const { CONNECTION_URL } = process.env;
 const PORT = process.env.PORT || 5000;
 
 mongoose
@@ -20,7 +32,9 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() =>
-    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
-  )
+  .then(() => console.log('Connected to mongodb'))
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+    swaggerDocs(app, PORT);
+  })
   .catch((error) => console.log(error.message));

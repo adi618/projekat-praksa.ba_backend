@@ -1,23 +1,44 @@
 {
   "name": "projekat-praksa.ba_backend",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix .",
     "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "express": "^4.17.2",
-    "mongoose": "^6.1.2"
+    "express": "^4.17.3",
+    "express-formidable": "^1.2.0",
+    "express-validator": "^6.14.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.2",
+    "multer": "^1.4.4",
+    "nodemailer": "^6.7.5",
+    "path": "^0.12.7",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0"
   },
   "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adi618/projekat-praksa.ba_backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adi618/projekat-praksa.ba_backend/issues"
+  },
+  "homepage": "https://github.com/adi618/projekat-praksa.ba_backend#readme",
+  "description": ""
 }
